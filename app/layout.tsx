@@ -3,11 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
   ClerkProvider,
-  // SignInButton,
   SignedIn,
-  // SignedOut,
   UserButton
-} from '@clerk/nextjs'
+} from '@clerk/nextjs';
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +43,14 @@ export default function RootLayout({
                   }
                 }}
               />
+              <div
+                className="m-2"
+              >
+                <Link
+                  className="text-white bg-blue-500 p-2 rounded"
+                  href={'/dashboard'}
+                >Dashboard</Link>
+              </div>
             </div>
           </SignedIn>
           {children}

@@ -28,6 +28,21 @@ export async function createUser(
   return returnUser;
 }
 
+export async function findUserByClerkId(
+  clerkId: string
+) {
+  const returnUser = prisma.user.findUnique({
+    where: {
+      clerkId: clerkId
+    },
+    include: {
+      transcripts: true
+    }
+  });
+
+  return returnUser;
+}
+
 export async function createTranscript(
   userId: number,
   text: string,
@@ -55,20 +70,26 @@ export async function createTranscript(
     }
   });
 
-  const returnTranscript = await prisma.transcript.findUnique({
-    where: {
-      id: transcript.id
-    }
-  });
+  // const returnTranscript = await prisma.transcript.findUnique({
+  //   where: {
+  //     id: transcript.id
+  //   }
+  // });
 
-  return returnTranscript;
+  return transcript;
 }
 
-export async function getTranscripts(userId: number) {
+export async function getTranscriptsCount(userID: number) {
+  const transcripts = await prisma.transcript.findMany({
+    where: { userId: userID }
+  });
+  return transcripts.length;
+}
+
+export async function findTranscripts(userId: number) {
   const transcripts = prisma.transcript.findMany({
-    where: {
-      userId: userId
-    }
+    where: { userId: userId },
+    orderBy: { createdAt: 'desc' },
   });
   return transcripts;
 }
