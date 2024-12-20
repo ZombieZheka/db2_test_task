@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const transcript = await createTranscript(user.id, text, language, `${duration}`, words.length);
     return NextResponse.json({ transcript: transcript }, { status: 200 });
   } catch (error) {
-    console.error('OpenAI Error:', error.message);
+    console.error('OpenAI Error:', error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }
