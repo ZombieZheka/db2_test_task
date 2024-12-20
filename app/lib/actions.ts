@@ -64,6 +64,11 @@ export async function createTranscript(
   return returnTranscript;
 }
 
-export function getTranscripts() {
-  //
+export async function getTranscripts(userId: number) {
+  const transcripts = prisma.transcript.findMany({
+    where: {
+      userId: userId
+    }
+  });
+  return transcripts;
 }
