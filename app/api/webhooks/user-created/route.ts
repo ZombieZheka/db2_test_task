@@ -1,4 +1,4 @@
-// import { prisma } from '@/app/lib/prisma';
+import { prisma } from '@/app/lib/prisma';
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
@@ -7,7 +7,8 @@ export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
 
   if (!SIGNING_SECRET) {
-    throw new Error('Error: Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local');
+    console.error("Missing SIGNING_SECRET in environment variables");
+    return new Response("Error: Missing signing secret", { status: 500 });
   }
 
   // Create new Svix instance with secret
@@ -45,16 +46,25 @@ export async function POST(req: Request) {
       status: 400,
     })
   }
+
+  console.log("Headers received:", {
+    "svix-id": svix_id,
+    "svix-timestamp": svix_timestamp,
+    "svix-signature": svix_signature,
+  });
+  console.log("Payload received:", payload);
   
-  // if (evt.type === 'user.created') {
-  //   console.log('userId:', evt.data.id);
-  //   prisma.user.create({
-  //     data: {
-  //       clerkId: evt.data.id,
-  //       email: evt.data.email_addresses[0].email_address
-  //     }
-  //   });
-  // }
+  if (evt.type === 'user.created') {
+    console.log("User created event received:", evt.data.id);
+    await prisma.user.create({
+      data: {
+        clerkId: evt.data.id,
+        email: evt.data.email_addresses[0].email_address
+      }
+    });
+  } else {
+    console.warn("Unhandled event type:", evt.type);
+  }
 
   return new Response('Webhook received', { status: 200 });
 }
